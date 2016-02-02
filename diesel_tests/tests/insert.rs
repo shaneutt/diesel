@@ -113,9 +113,36 @@ struct BaldUser {
     name: String,
 }
 
-#[insertable_into(users)]
+// #[insertable_into(users)]
 struct BorrowedUser<'a> {
     name: &'a str,
+}
+
+use diesel::expression::AsExpression;
+use diesel::types::VarChar;
+use diesel::persistable::{InsertValues, ColumnInsertValue};
+use diesel::backend::Backend;
+use diesel::expression::bound::Bound;
+
+impl<'a: 'insert, 'insert, DB> Insertable<users::table, DB> for &'insert BorrowedUser<'a> where
+    DB: Backend,
+    (ColumnInsertValue<
+        users::name,
+        // <&'insert &'a str as AsExpression<VarChar>>::Expression,
+        Bound<VarChar, &'insert &'a str>,
+    >,): InsertValues<DB>,
+{
+    type Values = (ColumnInsertValue<
+        users::name,
+        <&'insert &'a str as AsExpression<VarChar>>::Expression,
+    >,);
+
+    fn values(self) -> Self::Values {
+        (ColumnInsertValue::Expression(
+            users::name,
+            AsExpression::<VarChar>::as_expression(&self.name),
+        ),)
+    }
 }
 
 #[test]
