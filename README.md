@@ -1,5 +1,7 @@
-Diesel - A safe, extensible ORM and Query Builder for Rust
-==========================================================
+![Diesel](diesel_logo_stacked.svg)
+
+A safe, extensible ORM and Query Builder for Rust
+-------------------------------------------------
 
 [![Build Status](https://travis-ci.org/sgrif/diesel.svg)](https://travis-ci.org/sgrif/diesel)
 [![Gitter](https://badges.gitter.im/sgrif/diesel.svg)](https://gitter.im/sgrif/diesel?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
