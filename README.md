@@ -1,4 +1,4 @@
-![Diesel](diesel_logo_stacked.svg)
+![Diesel](https://raw.githubusercontent.com/sgrif/diesel/sg-logo-in-readme/diesel_logo_stacked.svg)
 
 A safe, extensible ORM and Query Builder for Rust
 -------------------------------------------------
