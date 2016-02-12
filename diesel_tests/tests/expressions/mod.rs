@@ -253,8 +253,8 @@ fn test_avg_for_nullable() {
 }
 
 #[test]
-#[cfg(feature = "postgres")] // FIXME: We need to test this on SQLite when we support these types
-fn test_avg_for_integer() {
+#[cfg(feature = "postgres")]
+fn test_postgres_avg_for_integer() {
     use self::numbers::columns::*;
     use self::numbers::table as numbers;
 
@@ -281,6 +281,32 @@ fn test_avg_for_integer() {
     assert_eq!(Ok(expected_result), result);
 }
 
+#[test]
+#[cfg(feature = "sqlite")]
+fn test_sqlite_avg_for_integer() {
+    use self::numbers::columns::*;
+    use self::numbers::table as numbers;
+    use diesel::sqlite::sql_data_types::SqliteNumeric;
+
+    let connection = connection();
+    connection.execute("CREATE TABLE numbers (n INTEGER)").unwrap();
+    connection.execute("INSERT INTO numbers (n) VALUES (2), (1), (6)").unwrap();
+    let source = numbers.select(avg(n));
+
+    let result = source.first::<SqliteNumeric>(&connection);
+    let expected_result = SqliteNumeric::Positive {
+        number: "3.0".to_string()
+    };
+    assert_eq!(Ok(expected_result), result);
+
+    connection.execute("DELETE FROM numbers WHERE n = 2").unwrap();
+    let result = source.first::<SqliteNumeric>(&connection);
+    let expected_result = SqliteNumeric::Positive {
+        number: "3.5".to_string()
+    };
+    assert_eq!(Ok(expected_result), result);
+}
+
 table! {
     numeric (n) {
         n -> Numeric,
@@ -288,8 +314,8 @@ table! {
 }
 
 #[test]
-#[cfg(feature = "postgres")] // FIXME: We need to test this on SQLite
-fn test_avg_for_numeric() {
+#[cfg(feature = "postgres")]
+fn test_postgres_avg_for_numeric() {
     use self::numeric::columns::*;
     use self::numeric::table as numeric;
 
@@ -303,6 +329,25 @@ fn test_avg_for_numeric() {
         digits: vec![3],
         weight: 0,
         scale: 16,
+    };
+    assert_eq!(Ok(expected_result), result);
+}
+
+#[test]
+#[cfg(feature = "sqlite")]
+fn test_sqlite_avg_for_numeric() {
+    use self::numeric::columns::*;
+    use self::numeric::table as numeric;
+    use diesel::sqlite::sql_data_types::SqliteNumeric;
+
+    let connection = connection();
+    connection.execute("CREATE TABLE numeric (n NUMERIC(8,2))").unwrap();
+    connection.execute("INSERT INTO numeric (n) VALUES (2), (1), (6)").unwrap();
+    let source = numeric.select(avg(n));
+
+    let result = source.first::<SqliteNumeric>(&connection);
+    let expected_result = SqliteNumeric::Positive {
+        number: "3.0".to_string()
     };
     assert_eq!(Ok(expected_result), result);
 }

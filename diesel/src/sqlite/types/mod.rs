@@ -1,4 +1,5 @@
 mod date_and_time;
+pub mod floats;
 
 use std::io::prelude::*;
 use std::error::Error;

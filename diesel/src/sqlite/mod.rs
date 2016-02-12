@@ -16,3 +16,8 @@ impl ::query_builder::QueryFragment<Sqlite> for now {
         Ok(())
     }
 }
+
+pub mod sql_data_types {
+    #[doc(inline)]
+    pub use super::types::floats::SqliteNumeric;
+}

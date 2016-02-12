@@ -96,6 +96,14 @@ mod pg_types {
     test_round_trip!(naive_date_roundtrips, Date, u32, mk_naive_date);
 }
 
+// TODO: Add quickcheck impls
+// #[cfg(feature = "sqlite")]
+// mod sqlite_types {
+//     use super::*;
+//     use diesel::sqlite::sql_data_types::SqliteNumeric;
+//     test_round_trip!(numeric_roundtrips, Numeric, SqliteNumeric);
+// }
+
 pub fn mk_naive_datetime(data: (i64, u32)) -> NaiveDateTime {
     NaiveDateTime::from_timestamp(data.0, data.1 / 1000)
 }

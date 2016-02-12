@@ -334,6 +334,48 @@ fn pg_timestamp_to_sql_timestamp() {
 }
 
 #[test]
+#[cfg(feature = "sqlite")]
+fn sqlite_numeric_from_sql() {
+    use diesel::sqlite::sql_data_types::SqliteNumeric;
+
+    assert_eq!(
+        SqliteNumeric::Positive{number: "1.00000000000001".to_string()},
+        query_single_value::<Numeric, SqliteNumeric>("1.00000000000001")
+    );
+    assert_eq!(
+        SqliteNumeric::Negative{number: "-1.0".to_string()},
+        query_single_value::<Numeric, SqliteNumeric>("-1.0")
+    );
+    assert_eq!(
+        SqliteNumeric::NaN,
+        query_single_value::<Numeric, SqliteNumeric>("1e10000 + 1e10000")
+    );
+    assert_eq!(
+        SqliteNumeric::NaN,
+        query_single_value::<Numeric, SqliteNumeric>("1e10000")
+    );
+
+
+    // // FIXME This returns 1.0
+    // assert_eq!(
+    //     SqliteNumeric::Positive{number: "1.000000000000001".to_string()},
+    //     query_single_value::<Numeric, SqliteNumeric>("1.000000000000001")
+    // );
+
+    // // FIXME Figure out how to deal with null returns in this case
+    // returns an unexpected NULL
+    // assert_eq!(
+    //     SqliteNumeric::NaN,
+    //     query_single_value::<Numeric, SqliteNumeric>("1.0 / 0.0")
+    // );
+    // returns an unexpected NULL
+    // assert_eq!(
+    //     SqliteNumeric::NaN,
+    //     query_single_value::<Numeric, SqliteNumeric>("1e10000 - 1e10000")
+    // );
+}
+
+#[test]
 #[cfg(feature = "postgres")]
 fn pg_numeric_from_sql() {
     use diesel::data_types::PgNumeric;
